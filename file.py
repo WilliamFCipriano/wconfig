@@ -58,10 +58,13 @@ class IOFile:
             logging.debug('Reading configuration file from: %s', location)
             f = open(location)
             self.content = f.read()
+            self.statistics['total_lines'] = self.content.count('\n') + 1
             f.close()
         except Exception as ex:
             logger.warning('INI file loading failed with: %s', ex)
             raise UnrecoverableIOError
+
+
 
         try:
             if self.deploy():
@@ -75,7 +78,7 @@ class INI(IOFile):
 
     # Called at object initialization
     def deploy(self):
-        self.statistics['total_lines'] = 0
+        self.statistics['relevant_lines'] = 0
         self.statistics['has_groups'] = False
         return True
 
@@ -101,13 +104,13 @@ class INI(IOFile):
         return True
 
     def render_line(self, line):
+        self.statistics['relevant_lines'] += 1
         if ' = ' in line:
             line = line.split(' = ')
             self.statistics['whitespace_around_equals'] = True
         else:
             line = line.split('=')
             self.statistics['whitespace_around_equals'] = False
-        self.statistics['total_lines'] += 1
 
         return line[0], line[1]
 
