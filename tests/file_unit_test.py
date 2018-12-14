@@ -1,9 +1,8 @@
 import pytest
+from wconfig import file
 
 
 def test_basic_ini():
-
-    from wconfig import file
 
     # basic.ini
     example_ini_file = file.INI('test-files/basic.ini')
