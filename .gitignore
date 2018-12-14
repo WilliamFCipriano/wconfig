@@ -4,3 +4,4 @@
 .idea/modules.xml
 .idea/wconfig.iml
 .idea/workspace.xml
+*.pyc

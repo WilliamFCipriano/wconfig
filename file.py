@@ -18,7 +18,16 @@ class UnrecoverableParserError(Exception):
         logger.critical(message)
 
 
+class EmptyFileError(Exception):
+
+    def __init__(self, message='INI file contains no data'):
+        self.message = message
+        logger.critical(message)
+
+
 class IOFile:
+    # This should always be inherited and not called directly
+
     # setup method, prepare anything you'd do in
     # __init__ here
     def deploy(self):
@@ -32,21 +41,26 @@ class IOFile:
 
     def __init__(self, location):
 
+        # Interface
         self.vectorized = list()
         self.init_status = False
-
         self.statistics = dict()
         self.statistics['path'] = location
 
-        # private variables
+        # Internal
         self._cur_group = 'root'
 
+        # Verify that the file exists
         if not os.path.isfile(location):
             raise UnrecoverableIOError('File %s does not exist' % location)
 
+        # Gather file statistics
         self.statistics['path'] = location
         self.statistics['abspath'] = os.path.abspath(location)
         self.statistics['size'] = os.path.getsize(location)
+
+        if self.statistics['size'] == 0:
+            raise EmptyFileError()
 
         try:
             self.statistics['file_last_modified'] = os.path.getmtime(location)
@@ -54,6 +68,7 @@ class IOFile:
             logger.warning('Get modified time failed with: %s', ex)
             self.last_modified = False
 
+        # Load configuration file
         try:
             logging.debug('Reading configuration file from: %s', location)
             f = open(location)
@@ -64,8 +79,7 @@ class IOFile:
             logger.warning('INI file loading failed with: %s', ex)
             raise UnrecoverableIOError
 
-
-
+        # Run deploy method, and then vectorize method
         try:
             if self.deploy():
                 if self.vectorize():
@@ -100,9 +114,11 @@ class INI(IOFile):
                     rendered[self._cur_group].append(self.render_line(item))
 
         self.vectors = rendered
-
+        # Return True if successful
         return True
 
+    # Specific to this implementation
+    # not generally required
     def render_line(self, line):
         self.statistics['relevant_lines'] += 1
         if ' = ' in line:
@@ -113,7 +129,3 @@ class INI(IOFile):
             self.statistics['whitespace_around_equals'] = False
 
         return line[0], line[1]
-
-
-x = INI('example-files/example.ini')
-print(x.vectors)
