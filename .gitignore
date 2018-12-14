@@ -1,7 +1,16 @@
-
+.wconfig.egg-info
+.tox
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/misc.xml
 .idea/modules.xml
 .idea/wconfig.iml
 .idea/workspace.xml
 *.pyc
+*.h
+*.zip
+*.log
+.tox/py36/.tox-config1
+wconfig.egg-info/dependency_links.txt
+wconfig.egg-info/PKG-INFO
+wconfig.egg-info/SOURCES.txt
+wconfig.egg-info/top_level.txt

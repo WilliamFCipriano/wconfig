@@ -1,9 +1,9 @@
 import pytest
 
 
-def file_test():
+def test_basic_ini():
 
-    import file
+    from wconfig import file
 
     # basic.ini
     example_ini_file = file.INI('test-files/basic.ini')
@@ -25,14 +25,3 @@ def file_test():
     # ini file is malformed
     with pytest.raises(file.UnrecoverableParserError):
         print(file.INI('test-files/broken.ini'))
-
-
-
-
-
-
-
-
-
-def test_action():
-    file_test()
