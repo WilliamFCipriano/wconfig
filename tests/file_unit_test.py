@@ -63,25 +63,26 @@ def test_ini():
     example_ini_file = file.INI('test-files/test.ini')
 
     # root test
-    assert example_ini_file.vectors['root'] == []
+    assert 'root' in example_ini_file.vectors
 
     # colon testing
     assert 'colon_test' in example_ini_file.vectors, \
-        'Failure to parse colon group on line 1 of test.ini'
+        'Failure to parse colon group in test.ini'
 
     test_data = example_ini_file.vectors['colon_test']
 
     assert test_data[0] == ('colon_no_space','value'), \
-        'Failure to parse line 2 of of test.ini (colon_test)'
+        'Failure to parse colon_no_space value in colon_test'
     assert test_data[1] == ('colon_with_space', 'value'), \
-        'Failure to parse line 3 of of test.ini (colon_test)'
+        'Failure to parse colon_with_space value in colon_test'
     assert test_data[2] == ('equals_after_colon_with_no_space', 'value'), \
-        'Failure to parse line 4 of of test.ini (colon_test)'
+        'Failure to parse equals_after_colon_with_no_space value in colon_test'
     assert test_data[3] == ('equals_after_the_equals_after_the_colon_with_no_space', 'value'), \
-        'Failure to parse line 5 of of test.ini (colon_test)'
-    assert test_data[4] == ('guess_whos_back', 'backstreet')
+        'Failure to parse equals_after_the_equals_after_the_colon_with_no_space value in colon_test'
+    assert test_data[4] == ('guess_whos_back', 'backstreet'), \
+        'Failure to parse guess_whos_back value in colon_test'
 
-    
+
 
 
 
