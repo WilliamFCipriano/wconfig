@@ -28,6 +28,8 @@ def test_fail_safe_handling():
         objects.Configuration(mock)
 
 
-def test_statistics():
+def test_basic_ini_init():
 
     mock = file_mock()
+
+

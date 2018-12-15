@@ -1,4 +1,5 @@
 import logging
+from string import punctuation
 import os
 
 logger = logging.getLogger('wconfig.file')
@@ -38,6 +39,32 @@ class IOFile:
     # store this in self.vectorized and return True
     def vectorize(self):
         pass
+
+    def property_validator(self, property):
+
+        if property[0] == '_':
+            raise UnrecoverableParserError("Properties can not begin with _.")
+
+        for char in property:
+            if char == '_':
+                continue
+
+            if char in punctuation:
+                raise UnrecoverableParserError("Invalid character '%s' detected in property." % char)
+
+        return property
+
+    def value_validator(self, value):
+
+        if value.upper() is 'TRUE':
+            return True
+
+        if value.upper() is 'FALSE':
+            return False
+
+        return value
+
+
 
     def __init__(self, location):
 
@@ -94,6 +121,8 @@ class INI(IOFile):
     def deploy(self):
         self.statistics['relevant_lines'] = 0
         self.statistics['has_groups'] = False
+        self.statistics['total_entries'] = 0
+        self.statistics['skipped_lines'] = 0
         return True
 
     # Called directly after deploy()
@@ -103,29 +132,48 @@ class INI(IOFile):
         rendered[self._cur_group] = list()
 
         for item in cache:
-            if item[0] != '#':
+            if len(item) == 0:
+                continue
+
+            if item[0] not in ('#', ';'):
                 if item[0] == '[':
                     if item[len(item) - 1] == ']':
                         self.statistics['has_groups'] = True
                         self._cur_group = item[1:-1]
                         rendered[self._cur_group] = list()
 
-                if '=' in item:
-                    rendered[self._cur_group].append(self.render_line(item))
+                elif '=' in item:
+                    rendered[self._cur_group].append(self.render_line(item, '='))
+                    self.statistics['total_entries'] += 1
+
+                elif ':' in item:
+                    rendered[self._cur_group].append(self.render_line(item, ':'))
+                    self.statistics['total_entries'] += 1
+                else:
+                    self.statistics['skiped_lines'] += 1
+
+        if rendered == {'root': []}:
+            raise UnrecoverableParserError('Invalid file.')
 
         self.vectors = rendered
-        # Return True if successful
-        return True
+
+        # basic sanity check
+        if self.statistics['total_entries'] >= 1:
+            return True
+        else:
+            return False
 
     # Specific to this implementation
     # not generally required
-    def render_line(self, line):
+    def render_line(self, line, specialchar):
         self.statistics['relevant_lines'] += 1
-        if ' = ' in line:
-            line = line.split(' = ')
+
+        specialchar_with_space = ' %s ' % specialchar
+        if specialchar_with_space in line:
+            line = line.split(specialchar_with_space)
             self.statistics['whitespace_around_equals'] = True
         else:
-            line = line.split('=')
+            line = line.split(specialchar)
             self.statistics['whitespace_around_equals'] = False
 
-        return line[0], line[1]
+        return self.property_validator(line[0]), self.value_validator(line[1])

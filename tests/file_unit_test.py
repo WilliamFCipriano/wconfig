@@ -23,3 +23,8 @@ def test_basic_ini():
     # ini file is malformed
     with pytest.raises(file.UnrecoverableParserError):
         print(file.INI('test-files/broken.ini'))
+
+
+def test_advanced_ini():
+
+    example_ini_file = file.INI('test-files/advanced.ini')
