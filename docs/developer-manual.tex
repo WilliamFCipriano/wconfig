@@ -1,0 +1,86 @@
+% Document Shell - Header
+
+\documentclass{article}
+\usepackage{titlesec}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.1,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+\definecolor{background}{rgb}{.9,.9,.9}
+
+\usepackage[scaled]{helvet}
+\renewcommand\familydefault{\sfdefault}
+\usepackage[T1]{fontenc}
+
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12}
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}
+
+\definecolor{light-gray}{gray}{0.95}
+\newcommand{\monospaced}[1]{\colorbox{light-gray}{\texttt{#1}}}
+
+\newcommand\pythonstyle{\lstset{
+language=Python,
+xleftmargin = 2cm,
+framexleftmargin = 1em,
+basicstyle=\ttm,
+otherkeywords={self, assert},
+keywordstyle=\ttm\color{deepblue},
+emph={Exception}
+emphstyle=\color{deepred},
+stringstyle=\color{deepgreen},
+showstringspaces=false
+}}
+
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+\setcounter{secnumdepth}{4}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\begin{document}
+
+% Document Shell - Header End
+
+
+\section{Test Documentation}
+This section should serve as a reference guide for those who are unfortunate enough to interact with assertion errors in the test suite.
+
+\subsection{Unit Tests}
+Unit tests should be as self contained as possible to allow for focused and granular interrogations of the code. Limiting the breadth of failures may allow developers to locate faults more easily.
+
+\subsubsection{wconfig.file}
+file.py requires significant correctness testing as it is a entrypoint for configuration files from the filesystem. It also handles parsing files and creating a vectorized output from them that can be utilized by higher level configuration objects to create themselves.
+\\
+The core interfaces that are currently tested are:
+\begin{enumerate}
+\item \monospaced{file.IOFile.vectors} is tested via using wconfig.file.INI to parse the file located in test-files\textbackslash test.ini and then performing a number assertion to validate that it had correctly render the file.
+\item \monospaced{wconfile.file.} 
+\item error handling is testing like thus
+\end{enumerate}
+
+
+
+
+
+% Body End
+
+\end{document}
+
+% Body End
+
+
+
+
+
