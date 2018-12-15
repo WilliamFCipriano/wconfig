@@ -19,6 +19,13 @@ class UnrecoverableParserError(Exception):
         logger.critical(message)
 
 
+class IllegalParserError(Exception):
+
+    def __init__(self, message):
+        self.message = message
+        logger.critical(message)
+
+
 class EmptyFileError(Exception):
 
     def __init__(self, message='INI file contains no data'):
@@ -43,26 +50,16 @@ class IOFile:
     def property_validator(self, property):
 
         if property[0] == '_':
-            raise UnrecoverableParserError("Properties can not begin with _.")
+            raise IllegalParserError("Properties can not begin with _.")
 
         for char in property:
             if char == '_':
                 continue
 
             if char in punctuation:
-                raise UnrecoverableParserError("Invalid character '%s' detected in property." % char)
+                raise IllegalParserError("Invalid character '%s' detected in property." % char)
 
         return property
-
-    def value_validator(self, value):
-
-        if value.upper() is 'TRUE':
-            return True
-
-        if value.upper() is 'FALSE':
-            return False
-
-        return value
 
 
 
@@ -107,12 +104,9 @@ class IOFile:
             raise UnrecoverableIOError
 
         # Run deploy method, and then vectorize method
-        try:
-            if self.deploy():
-                if self.vectorize():
-                    self.init_status = True
-        except Exception as ex:
-            raise UnrecoverableParserError('Parser error: %s' % str(ex))
+        if self.deploy():
+            if self.vectorize():
+                self.init_status = True
 
 
 class INI(IOFile):
@@ -150,10 +144,10 @@ class INI(IOFile):
                     rendered[self._cur_group].append(self.render_line(item, ':'))
                     self.statistics['total_entries'] += 1
                 else:
-                    self.statistics['skiped_lines'] += 1
+                    self.statistics['skipped_lines'] += 1
 
         if rendered == {'root': []}:
-            raise UnrecoverableParserError('Invalid file.')
+            raise UnrecoverableParserError("File '%s' is invalid. (%s)" % (self.statistics['path'], self.statistics['abspath']))
 
         self.vectors = rendered
 
@@ -176,4 +170,4 @@ class INI(IOFile):
             line = line.split(specialchar)
             self.statistics['whitespace_around_equals'] = False
 
-        return self.property_validator(line[0]), self.value_validator(line[1])
+        return self.property_validator(line[0]), line[1]
