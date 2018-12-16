@@ -15,3 +15,6 @@ wconfig.egg-info/PKG-INFO
 wconfig.egg-info/SOURCES.txt
 wconfig.egg-info/top_level.txt
 docs/developer-manual.synctex.gz
+docs/developer-manual.pdf
+docs/templates/default_style.pdf
+docs/templates/default_style.synctex.gz

@@ -55,7 +55,7 @@ def test_basic_ini():
 
     # error handling: ini file has a bad property
     with pytest.raises(file.IllegalParserError):
-        file.INI('test-files/bad_property.ini')
+        file.INI('test-files/badproperty.ini')
 
 
 def test_ini():

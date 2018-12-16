@@ -53,6 +53,31 @@ showstringspaces=false
 
 % Document Shell - Header End
 
+% Title Page
+
+\begin{titlepage}
+   \vspace*{\stretch{1.0}}
+   \begin{center}
+      \Large\textbf{wconfig - Developer Manual}\\
+      \large\textit{William F. Cipriano}\\
+      \tiny{will@willcipriano.com}
+   \end{center}
+   \vspace*{\stretch{2.0}}
+\end{titlepage}
+
+% Title Page End
+
+% Table of Contents
+
+\tableofcontents
+
+\listoftables
+
+
+\newpage
+
+% Table of Contents End
+
 
 \section{Test Documentation}
 This section should serve as a reference guide for those who are unfortunate enough to interact with assertion errors in the test suite.
@@ -61,18 +86,33 @@ This section should serve as a reference guide for those who are unfortunate eno
 Unit tests should be as self contained as possible to allow for focused and granular interrogations of the code. Limiting the breadth of failures may allow developers to locate faults more easily.
 
 \subsubsection{wconfig.file}
-file.py requires significant correctness testing as it is a entrypoint for configuration files from the filesystem. It also handles parsing files and creating a vectorized output from them that can be utilized by higher level configuration objects to create themselves.
-\\
+file.py requires significant correctness testing as it is a entrypoint for configuration files from the filesystem. It also handles parsing files and creating a vectorized output from them that can be utilized by higher level configuration objects to create themselves.\\
+With the exception of the files in test-files, file.py has no dependecies to test.\\
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{||c c||} 
+\hline
+test file & component tested \\ [0.5ex] 
+\hline\hline
+basic.ini & IOFile correctness testing \\
+test.ini & INI correctness testing \\ 
+BADPATH.ini & UnrecoverableIOError negitive testing \\ 
+blankfile.ini & EmptyFileError negitive testing \\ 
+broken.ini & UnrecoverableParserError negitive testing \\ 
+badproperty.ini & IllegalParserError negitive testing \\ 
+\hline
+\end{tabular}
+\caption{test files used by wconfig.file}
+\label{table:1}
+\end{table}
+
 The core interfaces that are currently tested are:
 \begin{enumerate}
-\item \monospaced{file.IOFile.vectors} is tested via using wconfig.file.INI to parse the file located in test-files\textbackslash test.ini and then performing a number assertion to validate that it had correctly render the file.
-\item \monospaced{wconfile.file.} 
+\item \monospaced{file.IOFile} is tested primarily via using wconfig.file.INI to parse the file located in test-files\textbackslash test.ini and then performing a number assertions to validate that it had correctly rendered the file.
+\item \monospaced{file.INI} is tested in addition to \monospaced{file.IOFile} by the secondary test suite located in 
 \item error handling is testing like thus
 \end{enumerate}
-
-
-
-
 
 % Body End
 
