@@ -23,5 +23,8 @@ class Configuration:
 
         self._statistics = IOFile.statistics
 
+        for vector in IOFile.vectorized:
+            setattr(self, vector[0], vector[1])
+
 
 

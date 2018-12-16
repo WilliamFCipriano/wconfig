@@ -28,8 +28,24 @@ def test_fail_safe_handling():
         objects.Configuration(mock)
 
 
-def test_basic_ini_init():
+def test_basic_ini_statistics():
 
     mock = file_mock()
+    test_configuration = objects.Configuration(mock)
+
+    assert test_configuration._statistics['path'] == 'test-files/basic.ini', \
+        'Configuraton object path statistic parse failure'
+    assert test_configuration._statistics['abspath'] == 'C:\\code\\wconfig\\tests\\basic.ini', \
+        'Configuration object abspath statistic parse failure'
+    assert test_configuration._statistics['size'] == 240, \
+        'Configuration object size statistic parse failure'
+    assert test_configuration._statistics['file_last_modified'] == 1544501341.19, \
+        'Configuration object file_last_modified statistic parse failure'
+    assert test_configuration._statistics['total_lines'] == 13, \
+        'Configuration object total_lines statistic parse failure'
+    assert test_configuration._statistics['relevant_lines'] == 8, \
+        'Configuration object relevant_lines statistic parse failure'
+
+
 
 

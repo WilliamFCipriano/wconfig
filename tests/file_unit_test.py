@@ -1,11 +1,16 @@
 import pytest
 from wconfig import file
 
+# basic.ini
+example_ini_file = file.INI('test-files/basic.ini')
 
-def test_basic_ini():
 
-    # basic.ini
-    example_ini_file = file.INI('test-files/basic.ini')
+def test_fileio_read():
+    assert example_ini_file.content == open('test-files/basic.ini').read(), \
+        'Failure to accurately read from disk with basic.ini'
+
+
+def test_basic_ini_content():
 
     # content check
     assert example_ini_file.vectors['root'][0] == ('this_is_a_test', 'of the parser'), \
@@ -25,8 +30,11 @@ def test_basic_ini():
     assert example_ini_file.vectors['this group is something'][0] == ('but_this', 'is too!'), \
         'Failure to parse line 14 of basic.ini'
 
+
+def test_basic_ini_statistics():
+
     # statistics check
-    assert example_ini_file.statistics['path'] is 'test-files/basic.ini', \
+    assert example_ini_file.statistics['path'] == 'test-files/basic.ini', \
         'Failure to collect correct path statistic while parsing basic.ini'
     assert example_ini_file.statistics['total_lines'] is 15, \
         'Failure to collect correct total_lines statistic while parsing basic.ini'
@@ -41,21 +49,38 @@ def test_basic_ini():
     assert example_ini_file.statistics['whitespace_around_equals'] is False, \
         'Failure to collect correct whites_around_equals statistic while parsing basic.ini'
 
+
+# Negative testing
+def test_basic_ini_unrecoverableioerror():
     # error handling: ini file does not exist
     with pytest.raises(file.UnrecoverableIOError):
         file.INI('test-files/BADPATH.ini')
 
+
+def test_basic_ini_emptyfileerror():
     # error handling: ini file contains no data
     with pytest.raises(file.EmptyFileError):
         file.INI('test-files/blankfile.ini')
 
+
+def test_basic_ini_unrecoverableparsererror():
     # error handling: ini file has mass but no data
     with pytest.raises(file.UnrecoverableParserError):
         file.INI('test-files/broken.ini')
 
+
+def test_basic_ini_illegalparsererror():
     # error handling: ini file has a bad property
     with pytest.raises(file.IllegalParserError):
         file.INI('test-files/badproperty.ini')
+
+
+def test_io_file_property_validator():
+    with pytest.raises(file.IllegalParserError):
+        example_ini_file.property_validator('_test')
+
+    with pytest.raises(file.IllegalParserError):
+        example_ini_file.property_validator('propertname!!!')
 
 
 def test_ini():
