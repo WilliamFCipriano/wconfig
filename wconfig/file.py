@@ -39,15 +39,20 @@ class IOFile:
     # setup method, prepare anything you'd do in
     # __init__ here
     def deploy(self):
+        logger.critical('deploy method has not been configured')
         pass
 
     # generate group > key > pair results
     # as a dictionary that points to lists of tuples
     # store this in self.vectorized and return True
     def vectorize(self):
+        logger.critical('vectorize method has not been configured')
         pass
 
     def property_validator(self, property):
+
+        if len(property) == 0:
+            raise IllegalParserError("Property length can't be zero.")
 
         if property[0] == '_':
             raise IllegalParserError("Properties can not begin with _.")
@@ -57,6 +62,7 @@ class IOFile:
                 continue
 
             if char in punctuation:
+                logger.critical('property: "%s" contains invalid character' % property)
                 raise IllegalParserError("Invalid character '%s' detected in property." % char)
 
         return property
@@ -86,22 +92,17 @@ class IOFile:
         if self.statistics['size'] == 0:
             raise EmptyFileError()
 
-        try:
-            self.statistics['file_last_modified'] = os.path.getmtime(location)
-        except Exception as ex:
-            logger.warning('Get modified time failed with: %s', ex)
-            self.last_modified = False
+
+        self.statistics['file_last_modified'] = os.path.getmtime(location)
+
 
         # Load configuration file
-        try:
-            logging.debug('Reading configuration file from: %s', location)
-            f = open(location)
-            self.content = f.read()
-            self.statistics['total_lines'] = self.content.count('\n') + 1
-            f.close()
-        except Exception as ex:
-            logger.warning('INI file loading failed with: %s', ex)
-            raise UnrecoverableIOError
+        logging.debug('Reading configuration file from: %s', location)
+        f = open(location)
+        self.content = f.read()
+        self.statistics['total_lines'] = self.content.count('\n') + 1
+        f.close()
+
 
         # Run deploy method, and then vectorize method
         if self.deploy():
@@ -135,16 +136,35 @@ class INI(IOFile):
                         self.statistics['has_groups'] = True
                         self._cur_group = item[1:-1]
                         rendered[self._cur_group] = list()
+                        continue
 
-                elif '=' in item:
-                    rendered[self._cur_group].append(self.render_line(item, '='))
-                    self.statistics['total_entries'] += 1
+                # As = or : can be used as an operator
+                # we have to do some magic to figure out what one
+                # the file is trying to do.
+                if item.find('=') != -1:
+                    if item.find(':') == -1:
+                        rendered[self._cur_group].append(self.render_line(item, '='))
+                        self.statistics['total_entries'] += 1
+                        continue
+                    else:
+                        if item.find('=') < item.find(':'):
+                            rendered[self._cur_group].append(self.render_line(item, '='))
+                            self.statistics['total_entries'] += 1
+                            continue
 
-                elif ':' in item:
-                    rendered[self._cur_group].append(self.render_line(item, ':'))
-                    self.statistics['total_entries'] += 1
-                else:
-                    self.statistics['skipped_lines'] += 1
+
+                if item.find(':') != -1:
+                    if item.find('=') == -1:
+                        rendered[self._cur_group].append(self.render_line(item, ':'))
+                        self.statistics['total_entries'] += 1
+                        continue
+                    else:
+                        if item.find(':') < item.find('='):
+                            rendered[self._cur_group].append(self.render_line(item, ':'))
+                            self.statistics['total_entries'] += 1
+                            continue
+
+                self.statistics['skipped_lines'] += 1
 
         if rendered == {'root': []}:
             raise UnrecoverableParserError("File '%s' is invalid. (%s)" % (self.statistics['path'], self.statistics['abspath']))
@@ -154,8 +174,6 @@ class INI(IOFile):
         # basic sanity check
         if self.statistics['total_entries'] >= 1:
             return True
-        else:
-            return False
 
     # Specific to this implementation
     # not generally required
@@ -163,11 +181,20 @@ class INI(IOFile):
         self.statistics['relevant_lines'] += 1
 
         specialchar_with_space = ' %s ' % specialchar
-        if specialchar_with_space in line:
-            line = line.split(specialchar_with_space)
-            self.statistics['whitespace_around_equals'] = True
+
+        space_loc = line.find(specialchar_with_space)
+        no_space_loc = line.find(specialchar)
+
+
+
+        if space_loc != -1:
+            if space_loc < no_space_loc:
+                data = line.split(specialchar_with_space, 1)
+                self.statistics['whitespace_around_equals'] = True
         else:
-            line = line.split(specialchar)
+            data = line.split(specialchar, 1)
             self.statistics['whitespace_around_equals'] = False
 
-        return self.property_validator(line[0]), line[1]
+        return self.property_validator(data[0]), data[1]
+
+

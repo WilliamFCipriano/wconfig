@@ -19,3 +19,7 @@ docs/developer-manual.pdf
 docs/templates/default_style.pdf
 docs/templates/default_style.synctex.gz
 docs/developer-manual.pdf
+bad.ini
+fuzz.ini
+.idea/vcs.xml
+.coverage
