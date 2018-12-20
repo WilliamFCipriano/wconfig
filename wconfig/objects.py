@@ -25,11 +25,11 @@ class Configuration:
         self._statistics = IOFile.statistics
 
         try:
-            for key in IOFile.vectorized:
+            for key in IOFile.vectors:
 
-                self._group[key] = IOFile.vectorized[key]
+                self._group[key] = IOFile.vectors[key]
 
-                for property in IOFile.vectorized[key]:
+                for property in IOFile.vectors[key]:
                     setattr(self, property[0], property[1])
 
         except KeyError:

@@ -15,7 +15,7 @@ class file_mock:
 
     def __init__(self, vectorized=basic_vectors_mock_data, location='test-files/basic.ini',
                  statistics=basic_statistics_mock_data, init_status = True):
-        self.vectorized = vectorized
+        self.vectors = vectorized
         self.init_status = init_status
         self.statistics = statistics
         self.statistics['path'] = location

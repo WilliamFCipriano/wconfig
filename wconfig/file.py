@@ -182,12 +182,8 @@ class INI(IOFile):
 
         specialchar_with_space = ' %s ' % specialchar
 
-        print(line)
         space_loc = line.find(specialchar_with_space)
-        print(space_loc)
         no_space_loc = line.find(specialchar)
-        print(no_space_loc)
-
 
 
 
