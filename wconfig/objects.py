@@ -21,10 +21,17 @@ class Configuration:
         if not IOFile.init_status:
             raise UninitializedFileError
 
+        self._group = dict()
         self._statistics = IOFile.statistics
 
-        for vector in IOFile.vectorized:
-            setattr(self, vector[0], vector[1])
+        try:
+            for key in IOFile.vectorized:
 
+                self._group[key] = IOFile.vectorized[key]
 
+                for property in IOFile.vectorized[key]:
+                    setattr(self, property[0], property[1])
+
+        except KeyError:
+            raise DevectorizationError
 

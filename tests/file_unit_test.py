@@ -10,6 +10,8 @@ example_ini_file = file.INI('test-files/basic.ini')
 seed = random.randint(1, 99999)
 random.seed(seed)
 
+print(example_ini_file.vectorized)
+
 
 # INI fuzzer test prep
 def generate_random_key_pair():

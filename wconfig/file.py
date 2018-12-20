@@ -182,8 +182,12 @@ class INI(IOFile):
 
         specialchar_with_space = ' %s ' % specialchar
 
+        print(line)
         space_loc = line.find(specialchar_with_space)
+        print(space_loc)
         no_space_loc = line.find(specialchar)
+        print(no_space_loc)
+
 
 
 
@@ -191,6 +195,10 @@ class INI(IOFile):
             if space_loc < no_space_loc:
                 data = line.split(specialchar_with_space, 1)
                 self.statistics['whitespace_around_equals'] = True
+            else:
+                data = line.split(specialchar, 1)
+                self.statistics['whitespace_around_equals'] = False
+
         else:
             data = line.split(specialchar, 1)
             self.statistics['whitespace_around_equals'] = False
