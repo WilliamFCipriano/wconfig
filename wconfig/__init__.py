@@ -1,6 +1,3 @@
 """wconfig a python configuration library"""
 import sys
-from .about import _ as about
-from .api import API
-
-
+from .api import about_this_software as about

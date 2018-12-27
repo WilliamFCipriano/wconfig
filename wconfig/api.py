@@ -1,7 +1,7 @@
 """wconfig public api"""
 import os
 from .file import *
-from .about import _ as about_software
+from .about import _ as about_this_software
 
 _default_locations = ['test', 'setup', 'config']
 
@@ -50,11 +50,4 @@ class ConfigurationLazyLoader:
             self.location = location
         else:
             raise UnrecoverableIOError
-
-
-
-
-
-
-API = ModuleInterface()
 
