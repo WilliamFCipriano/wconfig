@@ -32,6 +32,6 @@ class Configuration:
                 for property in IOFile.vectors[key]:
                     setattr(self, property[0], property[1])
 
-        except KeyError:
+        except (KeyError, TypeError):
             raise DevectorizationError
 

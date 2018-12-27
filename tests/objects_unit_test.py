@@ -64,3 +64,12 @@ def test_basic_ini_vectors():
                 'does not have key "%s".' % (property[0], property[1])
 
 
+def test_devectorization_error():
+    mock = file_mock()
+    mock.vectors = None
+
+    with pytest.raises(objects.DevectorizationError):
+        test_configuration = objects.Configuration(mock)
+
+
+
