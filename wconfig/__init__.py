@@ -1,2 +1,6 @@
-from .api import ini
-from .api import pseudo_quine as about
+"""wconfig a python configuration library"""
+import sys
+from .about import _ as about
+from .api import API
+
+

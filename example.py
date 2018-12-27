@@ -1,6 +1,5 @@
 import wconfig
 
-data = wconfig.ini('test-files/basic.ini')
+wconfig._about
 
-print(data.this_is_a_test)
-wconfig.about()
+wconfig.test.colon_no_space
